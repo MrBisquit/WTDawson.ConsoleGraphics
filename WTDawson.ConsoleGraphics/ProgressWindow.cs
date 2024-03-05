@@ -20,8 +20,8 @@
         public int Progress { get { return _Progress; } set { UpdateProgress(value); } }
         public bool IsIntermidiate { get { return _IsIntermidiate; } set { if (!UseThreading) { throw new Exception("Cannot use intermidiate while in single-threaded mode."); } else _IsIntermidiate = value; } }
         public bool UseLineTypes { get; set; } = true;
-        public char ProgressChar { get; set; } = '█'; // Could be #, █ or any others.
-        public char EmptyProgressChar { get; set; } = '▒'; // Could be ' ' or any others.
+        public char ProgressChar { get; set; } = '█'; // Could be #, █ or any others. Default: █
+        public char EmptyProgressChar { get; set; } = '▓'; // Could be ' ', ▒ or any others. Default: ▓
 
         private int LastBufferWidth = 0;
         private int LastBufferHeight = 0;
@@ -68,6 +68,9 @@
         public void Redraw(bool Clear = false)
         {
             if(Clear || (LastBufferWidth != Console.BufferWidth || LastBufferHeight != Console.BufferHeight)) Console.Clear(); // Completely clear the screen first (Not very good for quickly updating progress bars)
+
+            LastBufferWidth = Console.BufferWidth;
+            LastBufferHeight = Console.BufferHeight;
 
             Console.ResetColor();
 

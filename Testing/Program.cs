@@ -37,6 +37,14 @@ namespace Testing
             progressWindow.Lines.Add(new ProgressWindow.ConsoleLine(ProgressWindow.ConsoleLine.LineType.Completed, "Done"));
             progressWindow.UpdateProgress(100);
             progressWindow.Redraw(true);
+
+            SelectionMenu selectionMenu = new SelectionMenu("Selecting something I guess?", new List<SelectionMenu.SelectionElement>(), true);
+            selectionMenu.selectionElements.Add(new SelectionMenu.SelectionElement("Selection item 1"));
+            selectionMenu.selectionElements.Add(new SelectionMenu.SelectionElement("Selection item 2"));
+            selectionMenu.selectionElements.Add(new SelectionMenu.SelectionElement("Selection item 3"));
+            selectionMenu.selectionElements.Add(new SelectionMenu.SelectionElement("Selection item 4"));
+            selectionMenu.selectionElements.Add(new SelectionMenu.SelectionElement("Selection item 5"));
+            selectionMenu.Redraw(true);
         }
     }
 }
