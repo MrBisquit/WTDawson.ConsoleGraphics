@@ -1,7 +1,7 @@
 # WTDawson.ConsoleGraphics
 A C# Console Graphics Library.
 
-Current version: **1.0.0**
+Current version: **1.0.0** _[View changelog](/changelog.md#version-100-changelogs-published-05032024)_
 
 ## Features
 | Feature             | Implemented     | Version implemented in | Description                                             |
