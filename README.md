@@ -1,5 +1,5 @@
 # WTDawson.ConsoleGraphics
-A C# Console Graphics Library.
+A fully-customisable* C# Console Graphics Library.
 
 Current version: **1.0.0** _[View changelog](/changelog.md#version-100-changelogs-published-05032024)_
 
@@ -11,3 +11,5 @@ Current version: **1.0.0** _[View changelog](/changelog.md#version-100-changelog
 | [FileSystemMenu](#) | No              |                        | A GUI to select and manage files from the command line. |
 
 <!-- Used https://www.tablesgenerator.com/ just because it's easier) -->
+
+\* Not all features will be customisable, but for the most part it will be.
