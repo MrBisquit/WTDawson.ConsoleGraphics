@@ -6,7 +6,7 @@ namespace Testing
     {
         static void Main(string[] args)
         {
-            ProgressWindow progressWindow = new ProgressWindow(true, "Updating something I guess?", 25, false);
+            ProgressWindow progressWindow = new ProgressWindow(true, "Updating something I guess?", 25, false, true);
             progressWindow.Lines.Add(new ProgressWindow.ConsoleLine(ProgressWindow.ConsoleLine.LineType.Warn, "Hello"));
             progressWindow.Lines.Add(new ProgressWindow.ConsoleLine(ProgressWindow.ConsoleLine.LineType.Info, "World"));
             progressWindow.Redraw(true);
@@ -31,8 +31,12 @@ namespace Testing
                 progressWindow.Lines.Add(new ProgressWindow.ConsoleLine(ProgressWindow.ConsoleLine.LineType.None, $"New progress: {i + 1}%"));
                 progressWindow.Lines.Add(new ProgressWindow.ConsoleLine(ProgressWindow.ConsoleLine.LineType.Info, "Waiting 500ms..."));
 
-                Thread.Sleep(500);
+                Thread.Sleep(50);
             }
+
+            progressWindow.Lines.Add(new ProgressWindow.ConsoleLine(ProgressWindow.ConsoleLine.LineType.Completed, "Done"));
+            progressWindow.UpdateProgress(100);
+            progressWindow.Redraw(true);
         }
     }
 }

@@ -26,12 +26,13 @@
         private int LastBufferWidth = 0;
         private int LastBufferHeight = 0;
 
-        public ProgressWindow(bool useThreading, string? title, int progress, bool isIntermidiate)
+        public ProgressWindow(bool useThreading = true, string? title = null, int progress = 0, bool isIntermidiate = false, bool useLineTypes = true)
         {
             _UseThreading = useThreading;
             _Title = title;
             _Progress = progress;
             _IsIntermidiate = isIntermidiate;
+            UseLineTypes = useLineTypes;
         }
 
         public class ConsoleLine
@@ -67,6 +68,8 @@
         public void Redraw(bool Clear = false)
         {
             if(Clear || (LastBufferWidth != Console.BufferWidth || LastBufferHeight != Console.BufferHeight)) Console.Clear(); // Completely clear the screen first (Not very good for quickly updating progress bars)
+
+            Console.ResetColor();
 
             Console.Title = $"{Title} - {Progress}%";
 
