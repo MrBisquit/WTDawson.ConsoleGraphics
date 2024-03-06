@@ -6,6 +6,9 @@
     <Nullable>enable</Nullable>
     <Title>WTDawson.ConsoleGraphics</Title>
     <PackageProjectUrl>https://github.com/MrBisquit/WTDawson.ConsoleGraphics/</PackageProjectUrl>
+    <Version>1.1.0</Version>
+    <Description>A C# Console Graphics Library</Description>
+    <RepositoryUrl>https://github.com/MrBisquit/WTDawson.ConsoleGraphics/</RepositoryUrl>
   </PropertyGroup>
 
 </Project>
