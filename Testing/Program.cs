@@ -39,6 +39,7 @@ namespace Testing
             progressWindow.Redraw(true);
 
             SelectionMenu selectionMenu = new SelectionMenu("Selecting something I guess?", new List<SelectionMenu.SelectionElement>(), true);
+            selectionMenu.Custom.SelectedDisplayType = SelectionMenu.Customisation.DisplayType.Circular;
             selectionMenu.selectionElements.Add(new SelectionMenu.SelectionElement("Selection item 1"));
             selectionMenu.selectionElements.Add(new SelectionMenu.SelectionElement("Selection item 2"));
             selectionMenu.selectionElements.Add(new SelectionMenu.SelectionElement("Selection item 3"));

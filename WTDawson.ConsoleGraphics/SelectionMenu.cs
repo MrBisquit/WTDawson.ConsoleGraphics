@@ -28,6 +28,36 @@ namespace WTDawson.ConsoleGraphics
         public Action? Completed = null;
         public bool IsCompleted { get { return isCompleted; } }
 
+        public Customisation Custom = new Customisation();
+
+        public class Customisation
+        {
+            public enum DisplayType
+            {
+                Original = 0, // Confusing
+                Linux = 1,    // [ ] & [*]
+                Circular = 2, // ( ) & (o)
+                Custom = 3,   // A custom style
+                Icecream = -1 // Because why not :)
+            }
+
+            public DisplayType SelectedDisplayType = DisplayType.Linux;
+
+            public bool UseCustomKeys = true; // Else, just use the defaults
+            public ConsoleKey Up = ConsoleKey.UpArrow;
+            public ConsoleKey Down = ConsoleKey.DownArrow;
+            public ConsoleKey Exit = ConsoleKey.Escape;
+            public ConsoleKey Select = ConsoleKey.Enter;
+            public ConsoleKey Finish = ConsoleKey.F;
+
+            public bool UseCustomLabels = true; // Else, just use the defaults
+            public string UpLabel = "^";
+            public string DownLabel = "v";
+            public string ExitLabel = "Esc";
+            public string SelectLabel = "Enter";
+            public string Finishlabel = "F";
+        }
+
         public SelectionMenu(string? title, List<SelectionElement> elements, bool multiSelect = false)
         {
             Title = title;
@@ -54,7 +84,7 @@ namespace WTDawson.ConsoleGraphics
         {
             if (Clear || (LastBufferWidth != Console.BufferWidth || LastBufferHeight != Console.BufferHeight)) Console.Clear(); // Completely clear the screen first (Not very good for quickly updating progress bars)
 
-            Console.Title = Title;
+            Console.Title = Title == null ? "(Untitled)" : Title;
 
             int drawableLines = LastBufferHeight - (Title != null ? 1 : 0) - 1;
 
@@ -83,6 +113,12 @@ namespace WTDawson.ConsoleGraphics
             Console.BackgroundColor = ConsoleColor.White;
             Console.ForegroundColor = ConsoleColor.Black;
 
+            string _upLabel = Custom.UseCustomLabels ? Custom.UpLabel : "^";
+            string _downLabel = Custom.UseCustomLabels ? Custom.DownLabel : "v";
+            string _exitLabel = Custom.UseCustomLabels ? Custom.ExitLabel : "Esc";
+            string _enterLabel = Custom.UseCustomLabels ? Custom.SelectLabel : "Enter";
+            string _finishLabel = Custom.UseCustomLabels ? Custom.Finishlabel : "F";
+
             string controls = $"^ = Up  v = Down  Esc = Exit  Enter = Select  F = Finish  {(multiSelect ? "Multi-select is enabled." : "")}";
 
             Console.Write($" {controls}{RepeatChar(' ', Console.BufferWidth - controls.Length - 1)}");
@@ -92,7 +128,7 @@ namespace WTDawson.ConsoleGraphics
             // Draw the options
             if (Title != null) Console.SetCursorPosition(0, 1);
 
-            for (int i = 0; i < selectionElements.Count; i++)
+            /*for (int i = 0; i < selectionElements.Count; i++)
             {
                 if(SelectedIndex == i)
                 {
@@ -120,19 +156,41 @@ namespace WTDawson.ConsoleGraphics
 
                 Console.Write("\n");
                 Console.ResetColor();
+            }*/
+
+            switch (Custom.SelectedDisplayType)
+            {
+                case Customisation.DisplayType.Icecream:
+                    Console.WriteLine("Icecream flavoured display type :)");
+                    RedrawLinuxStyle(); // Draw the default
+                    break;
+                case Customisation.DisplayType.Original:
+                    RedrawOriginalStyle();
+                    break;
+                case Customisation.DisplayType.Linux:
+                    RedrawLinuxStyle();
+                    break;
+                case Customisation.DisplayType.Circular:
+                    RedrawCircularStyle();
+                    break;
+                case Customisation.DisplayType.Custom:
+                    throw new NotImplementedException();
+                    break;
+                default:
+                    break;
             }
 
             Console.ResetColor();
 
             ConsoleKeyInfo key = Console.ReadKey();
 
-            if(key.Key == ConsoleKey.UpArrow)
+            if(key.Key == (Custom.UseCustomKeys ? Custom.Up : ConsoleKey.UpArrow))
             {
                 if (SelectedIndex > 0) SelectedIndex -= 1;
-            } else if(key.Key == ConsoleKey.DownArrow)
+            } else if(key.Key == (Custom.UseCustomKeys ? Custom.Down : ConsoleKey.DownArrow))
             {
                 if (SelectedIndex < selectionElements.Count - 1) SelectedIndex += 1;
-            } else if(key.Key == ConsoleKey.Enter)
+            } else if(key.Key == (Custom.UseCustomKeys ? Custom.Select : ConsoleKey.Enter))
             {
                 if(!multiSelect)
                 {
@@ -148,11 +206,11 @@ namespace WTDawson.ConsoleGraphics
                         SelectedIndexes.Add(SelectedIndex);
                     }
                 }
-            } else if(key.Key == ConsoleKey.F)
+            } else if(key.Key == (Custom.UseCustomKeys ? Custom.Finish : ConsoleKey.F))
             {
                 isCompleted = true;
                 if (Completed != null) Completed();
-            } else if(key.Key == ConsoleKey.Escape)
+            } else if(key.Key == (Custom.UseCustomKeys ? Custom.Exit : ConsoleKey.Escape))
             {
                 SelectedIndex = -1;
                 SelectedIndexes.Clear();
@@ -162,6 +220,107 @@ namespace WTDawson.ConsoleGraphics
             }
 
             if(!isCompleted) Redraw();
+        }
+
+        private void RedrawOriginalStyle()
+        {
+            for (int i = 0; i < selectionElements.Count; i++)
+            {
+                if (SelectedIndex == i)
+                {
+                    Console.ForegroundColor = ConsoleColor.Blue;
+
+                    Console.Write(" ");
+
+                    if (SelectedIndexes.Contains(i)) WriteUnderlined(selectionElements[i].Title);
+                    else Console.Write(selectionElements[i].Title);
+                } else if (SelectedIndexes.Contains(i))
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+
+                    Console.Write(" ");
+
+                    WriteUnderlined(selectionElements[i].Title);
+                } else
+                {
+                    Console.ResetColor();
+
+                    if (selectionElements[i].CustomColor != null) Console.ForegroundColor = (ConsoleColor)selectionElements[i].CustomColor;
+
+                    Console.Write(selectionElements[i].Title);
+                }
+
+                Console.Write("\n");
+                Console.ResetColor();
+            }
+        }
+
+        private void RedrawLinuxStyle()
+        {
+            for (int i = 0; i < selectionElements.Count; i++)
+            {
+                if (SelectedIndexes.Contains(i) && multiSelect)
+                {
+                    Console.Write("[*]");
+                } else if(multiSelect)
+                {
+                    Console.Write("[ ]");
+                }
+
+                if (SelectedIndex == i)
+                {
+                    Console.Write(" ");
+
+                    Console.ForegroundColor = ConsoleColor.Blue;
+
+                    WriteUnderlined(selectionElements[i].Title);
+                } else
+                {
+                    Console.Write(" ");
+
+                    if (selectionElements[i].CustomColor != null) Console.ForegroundColor = (ConsoleColor)selectionElements[i].CustomColor;
+
+                    Console.Write(selectionElements[i].Title);
+                }
+
+                Console.ResetColor();
+                Console.Write("\n");
+            }
+        }
+
+        private void RedrawCircularStyle()
+        {
+            for (int i = 0; i < selectionElements.Count; i++)
+            {
+                if (SelectedIndexes.Contains(i) && multiSelect)
+                {
+                    Console.Write("(o)");
+                }
+                else if (multiSelect)
+                {
+                    Console.Write("( )");
+                }
+
+                if (SelectedIndex == i)
+                {
+                    Console.Write(" ");
+
+                    Console.ForegroundColor = ConsoleColor.Blue;
+
+                    WriteUnderlined(selectionElements[i].Title);
+                }
+                else
+                {
+                    Console.Write(" ");
+
+                    if (selectionElements[i].CustomColor != null) Console.ForegroundColor = (ConsoleColor)selectionElements[i].CustomColor;
+
+                    Console.Write(selectionElements[i].Title);
+                }
+
+                Console.ResetColor();
+                Console.Write("\n");
+            }
         }
 
         /// <summary>
