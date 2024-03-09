@@ -322,6 +322,8 @@ namespace WTDawson.ConsoleGraphics
         }
 
         private string FormatBytes(int bytes) => FormatBytes((long)bytes);
+
+        // https://stackoverflow.com/a/67945659/16426057
         private string FormatBytes(long bytes)
         {
             const long OneKB = 1024;
