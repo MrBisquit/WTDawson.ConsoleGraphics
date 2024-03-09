@@ -80,6 +80,165 @@ namespace WTDawson.ConsoleGraphics
             }
         }
 
+        public class SelectionResult
+        {
+            public int SelectedIndex;
+            public int[] SelectedIndexes;
+        }
+
+        public SelectionResult RedrawWithResult(bool Clear = false)
+        {
+            if (Clear || (LastBufferWidth != Console.BufferWidth || LastBufferHeight != Console.BufferHeight)) Console.Clear(); // Completely clear the screen first (Not very good for quickly updating progress bars)
+
+            Console.Title = Title == null ? "(Untitled)" : Title;
+
+            int drawableLines = LastBufferHeight - (Title != null ? 1 : 0) - 1;
+
+            if (drawableLines >= selectionElements.Count)
+            {
+                Console.WriteLine($"Please resize the console window vertically to be able to fit {selectionElements.Count} lines on.");
+                throw new Exception("Invalid Console Buffer Height. Cannot fit all elements.");
+            }
+
+            Console.SetCursorPosition(0, 0);
+
+            if (Title != null)
+            {
+                Console.BackgroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.Black;
+
+                Console.Write($" {Title}{RepeatChar(' ', Console.BufferWidth - Title.Length - 1)}");
+
+                Console.ResetColor();
+            }
+
+            // Display controls
+
+            Console.SetCursorPosition(0, Console.BufferHeight - 1);
+
+            Console.BackgroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.Black;
+
+            string _upLabel = Custom.UseCustomLabels ? Custom.UpLabel : "^";
+            string _downLabel = Custom.UseCustomLabels ? Custom.DownLabel : "v";
+            string _exitLabel = Custom.UseCustomLabels ? Custom.ExitLabel : "Esc";
+            string _enterLabel = Custom.UseCustomLabels ? Custom.SelectLabel : "Enter";
+            string _finishLabel = Custom.UseCustomLabels ? Custom.Finishlabel : "F";
+
+            string controls = $"^ = Up  v = Down  Esc = Exit  Enter = Select  F = Finish  {(multiSelect ? "Multi-select is enabled." : "")}";
+
+            Console.Write($" {controls}{RepeatChar(' ', Console.BufferWidth - controls.Length - 1)}");
+
+            Console.ResetColor();
+
+            // Draw the options
+            if (Title != null) Console.SetCursorPosition(0, 1);
+
+            /*for (int i = 0; i < selectionElements.Count; i++)
+            {
+                if(SelectedIndex == i)
+                {
+                    Console.ForegroundColor = ConsoleColor.Blue;
+
+                    Console.Write(" ");
+
+                    if(SelectedIndexes.Contains(i)) WriteUnderlined(selectionElements[i].Title);
+                    else Console.Write(selectionElements[i].Title);
+                } else if(SelectedIndexes.Contains(i))
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+
+                    Console.Write(" ");
+
+                    WriteUnderlined(selectionElements[i].Title);
+                } else
+                {
+                    Console.ResetColor();
+
+                    if (selectionElements[i].CustomColor != null) Console.ForegroundColor = (ConsoleColor)selectionElements[i].CustomColor;
+
+                    Console.Write(selectionElements[i].Title);
+                }
+
+                Console.Write("\n");
+                Console.ResetColor();
+            }*/
+
+            switch (Custom.SelectedDisplayType)
+            {
+                case Customisation.DisplayType.Icecream:
+                    Console.WriteLine("Icecream flavoured display type :)");
+                    RedrawLinuxStyle(); // Draw the default
+                    break;
+                case Customisation.DisplayType.Original:
+                    RedrawOriginalStyle();
+                    break;
+                case Customisation.DisplayType.Linux:
+                    RedrawLinuxStyle();
+                    break;
+                case Customisation.DisplayType.Circular:
+                    RedrawCircularStyle();
+                    break;
+                case Customisation.DisplayType.Custom:
+                    throw new NotImplementedException();
+                    break;
+                default:
+                    break;
+            }
+
+            Console.ResetColor();
+
+            ConsoleKeyInfo key = Console.ReadKey();
+
+            if (key.Key == (Custom.UseCustomKeys ? Custom.Up : ConsoleKey.UpArrow))
+            {
+                if (SelectedIndex > 0) SelectedIndex -= 1;
+            }
+            else if (key.Key == (Custom.UseCustomKeys ? Custom.Down : ConsoleKey.DownArrow))
+            {
+                if (SelectedIndex < selectionElements.Count - 1) SelectedIndex += 1;
+            }
+            else if (key.Key == (Custom.UseCustomKeys ? Custom.Select : ConsoleKey.Enter))
+            {
+                if (!multiSelect)
+                {
+                    isCompleted = true;
+                }
+                else
+                {
+                    if (SelectedIndexes.Contains(SelectedIndex))
+                    {
+                        SelectedIndexes.Remove(SelectedIndex);
+                    }
+                    else
+                    {
+                        SelectedIndexes.Add(SelectedIndex);
+                    }
+                }
+            }
+            else if (key.Key == (Custom.UseCustomKeys ? Custom.Finish : ConsoleKey.F))
+            {
+                isCompleted = true;
+            }
+            else if (key.Key == (Custom.UseCustomKeys ? Custom.Exit : ConsoleKey.Escape))
+            {
+                SelectedIndex = -1;
+                SelectedIndexes.Clear();
+
+                isCompleted = true;
+            }
+
+            if (!isCompleted) return RedrawWithResult();
+            else
+            {
+                return new SelectionResult()
+                {
+                    SelectedIndex = SelectedIndex,
+                    SelectedIndexes = SelectedIndexes.ToArray()
+                };
+            }
+        }
+
         public void Redraw(bool Clear = false)
         {
             if (Clear || (LastBufferWidth != Console.BufferWidth || LastBufferHeight != Console.BufferHeight)) Console.Clear(); // Completely clear the screen first (Not very good for quickly updating progress bars)

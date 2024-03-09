@@ -6,6 +6,38 @@ namespace Testing
     {
         static void Main(string[] args)
         {
+            SelectionMenu selectionMenu = new SelectionMenu("Select feature to test", new List<SelectionMenu.SelectionElement>());
+            selectionMenu.Custom.SelectedDisplayType = SelectionMenu.Customisation.DisplayType.Linux;
+            selectionMenu.selectionElements.Add(new SelectionMenu.SelectionElement("ProgressWindow"));
+            selectionMenu.selectionElements.Add(new SelectionMenu.SelectionElement("SelectionMenu"));
+            selectionMenu.selectionElements.Add(new SelectionMenu.SelectionElement("FileSystemMenu"));
+            SelectionMenu.SelectionResult result = selectionMenu.RedrawWithResult();
+
+            switch(result.SelectedIndex)
+            {
+                case 0:
+                    DrawProgressWindow();
+                    break;
+                case 1:
+                    DrawSelectionMenu();
+                    break;
+                case 2:
+                    DrawFileSystemMenu();
+                    break;
+
+                case -1:
+                    Console.WriteLine("You didn't select anything...");
+                    Console.ReadLine();
+                    break;
+            }
+
+            Console.Clear();
+
+            Main(args);
+        }
+
+        static void DrawProgressWindow()
+        {
             ProgressWindow progressWindow = new ProgressWindow(true, "Updating something I guess?", 25, false, true);
             progressWindow.Lines.Add(new ProgressWindow.ConsoleLine(ProgressWindow.ConsoleLine.LineType.Warn, "Hello"));
             progressWindow.Lines.Add(new ProgressWindow.ConsoleLine(ProgressWindow.ConsoleLine.LineType.Info, "World"));
@@ -20,7 +52,7 @@ namespace Testing
 
             for (int i = 0; i < 100; i++)
             {
-                if(i >= 50)
+                if (i >= 50)
                 {
                     progressWindow.Title = "Updating...";
                 }
@@ -37,7 +69,10 @@ namespace Testing
             progressWindow.Lines.Add(new ProgressWindow.ConsoleLine(ProgressWindow.ConsoleLine.LineType.Completed, "Done"));
             progressWindow.UpdateProgress(100);
             progressWindow.Redraw(true);
+        }
 
+        static void DrawSelectionMenu()
+        {
             SelectionMenu selectionMenu = new SelectionMenu("Selecting something I guess?", new List<SelectionMenu.SelectionElement>(), true);
             selectionMenu.Custom.SelectedDisplayType = SelectionMenu.Customisation.DisplayType.Circular;
             selectionMenu.selectionElements.Add(new SelectionMenu.SelectionElement("Selection item 1"));
@@ -46,6 +81,12 @@ namespace Testing
             selectionMenu.selectionElements.Add(new SelectionMenu.SelectionElement("Selection item 4"));
             selectionMenu.selectionElements.Add(new SelectionMenu.SelectionElement("Selection item 5"));
             selectionMenu.Redraw(true);
+        }
+
+        static void DrawFileSystemMenu()
+        {
+            FileSystemMenu fileSystemMenu = new FileSystemMenu("Select a file I guess?", false, null);
+            fileSystemMenu.RequestFileSelection();
         }
     }
 }
