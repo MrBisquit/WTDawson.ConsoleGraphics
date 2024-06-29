@@ -45,6 +45,9 @@ namespace Testing
             selectionMenu.selectionElements.Add(new SelectionMenu.SelectionElement("Selection item 4"));
             selectionMenu.selectionElements.Add(new SelectionMenu.SelectionElement("Selection item 5"));
             selectionMenu.Redraw(true);
+
+            FileSystemMenu fileSystemMenu = new FileSystemMenu("Selecting a file/folder I guess?");
+            fileSystemMenu.Redraw(true);
         }
     }
 }
